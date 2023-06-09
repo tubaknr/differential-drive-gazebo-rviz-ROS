@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<robot name="diff"  xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/diff</robotNamespace>
+            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        </plugin>
+    </gazebo>
+
+
+
+<!--PROPERTY LIST-->
+<!-- pi sayısı -->
+<xacro:property  name="M_PI" value="3.1415926535897931"/>  
+
+ <!-- PI/2'NİN DEĞERİ RADYAN!!!!! -->
+<xacro:property name="M_PI_2" value="1.57079632679"/>
+
+<!-- 1 DERECE KAÇ RADYAN = 0.017 RADYAN -->
+<xacro:property name="DEG_TO_RAD" value="0.0174533"/> 
+
+<!-- Base Properties -->
+<xacro:property name="base_height" value="0.02"/> <!-- 2 cm -->
+<xacro:property name="base_radius" value="0.15"/> <!-- 15 cm -->
+<xacro:property name="base_mass" value="5"/> <!-- 5 kg -->
+
+<!-- Caster front wheel prop-->
+<xacro:property name="caster_f_height" value="0.04"/> <!-- 4 cm -->
+<xacro:property name="caster_f_radius" value="0.025"/> <!-- 2.5 cm -->
+<xacro:property name="caster_f_mass" value="0.5"/> <!-- 0.5 kg -->
+
+<!-- Caster back wheel prop-->
+<xacro:property name="caster_b_height" value="0.02"/> <!-- 4 cm -->
+<xacro:property name="caster_b_radius" value="0.025"/> <!-- 2.5 cm -->
+<xacro:property name="caster_b_mass" value="0.5"/> <!-- 0.5 kg -->
+
+<!-- side main wheels prop -->
+<xacro:property name="base_x_origin_to_wheel_origin" value="0.25"/> <!-- 25 cm -->
+<xacro:property name="base_y_origin_to_wheel_origin" value="0.3"/> <!-- 30 cm -->
+<xacro:property name="base_z_origin_to_wheel_origin" value="0.00"/> <!-- 0 cm -->
+<xacro:property name="wheel_mass" value="2.5"/> <!-- 2.5 kg -->
+
+<!-- SENSORS Hokuyo Laser Scanner -->
+<xacro:property name="hokuyo_size" value="0.05"/> <!-- 5 cm -->
+<xacro:property name="update_rate" value="100.0"/>
+
+
+
+<!--Links-->
+
+    <gazebo reference="base_link">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/White</material>
+    </gazebo>
+
+    <gazebo reference="caster_front_link">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="caster_front_joint">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="caster_back_link">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="caster_back_joint">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="front_right_wheel">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="front_right_wheel_joint">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="front_left_wheel">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="front_left_wheel_joint">
+        <turnGravityOff>false</turnGravityOff>
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+
+
+<!--Transmission-->
+    <gazebo reference="front_left_wheel_joint">
+        <transmission name="front_left_wheel_joint_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="front_left_wheel_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="front_left_wheel_joint_motor"> <!--ACTUATOR=MOTOR-->
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+         </transmission> 
+    </gazebo>
+
+
+
+<!--Data-->
+    <gazebo reference="front_left_wheel_joint">
+        <mu1 value="1.0"/> <!--ANA sürtünme katsayısı. x'de gidicek-> x'deki sürtünme katsayısı bu. X olduğuu fdir1'de söylüyoruz.-->
+        <mu2 value="1.0"/> <!--sürtünme katsayısı-->
+        <fdir1 value="1 0 0"/> <!--tekerleğin yönelim doğrultusu. Araç hangi yöne gidiyor=X yönünde gidiyor=>1-->
+        <kp value="10000000.0"/> <!--dinamik sertlik STIFFNESS-->
+        <kd value="1.0"/> <!--sönümlemme DAMPING-->
+        <!--fdir1, mu1'in yönünü belirtir.-->
+        <turnGravityOff>false</turnGravityOff>
+    </gazebo>
+
+
+
+    <gazebo reference="front_right_wheel_joint">
+        <transmission name="front_right_wheel_joint_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="front_right_wheel_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="front_right_wheel_joint_motor"> <!--ACTUATOR=MOTOR-->
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+         </transmission> 
+    </gazebo>
+
+
+
+    <gazebo reference="front_right_wheel_joint">
+        <mu1 value="1.0"/> <!--ANA sürtünme katsayısı. x'de gidicek-> x'deki sürtünme katsayısı bu. X olduğuu fdir1'de söylüyoruz.-->
+        <mu2 value="1.0"/> <!--sürtünme katsayısı-->
+        <fdir1 value="1 0 0"/> <!--tekerleğin yönelim doğrultusu. Araç hangi yöne gidiyor=X yönünde gidiyor=>1-->
+        <kp value="10000000.0"/> <!--dinamik sertlik STIFFNESS-->
+        <kd value="1.0"/> <!--sönümlemme DAMPING-->
+        <!--fdir1, mu1'in yönünü belirtir.-->
+        <turnGravityOff>false</turnGravityOff>
+    </gazebo>
+
+
+
+
+
+
+</robot>
+
+
